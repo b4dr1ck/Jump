@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>  
+    <script src="/js/jquery.js"></script>
+    <script src="./drawz.js"></script>
+    <meta charset="utf-8">
+
+</head>  
+
+<body>
+    <style>
+        body
+        {
+            margin: 0px;
+            padding: 0px;
+            font-family: 'Arial';
+            color: #ccc;
+            background: #aaa;
+        }
+        
+        h1,h2
+        {
+            text-align: center;
+            margin: 0px;
+        }
+
+        p
+        {
+            position: absolute;
+            color:white;
+            margin:5px 0px 0px 5px;
+        }
+
+        #canvas_wrapper
+        {
+            width:500px;
+            margin: 0px auto;
+            border:1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            background: #666;
+        }
+    </style>
+
+    <div id="canvas_wrapper">
+        <h1>Bouncing Box</h1>
+        <h2>click to let it bounce...</h2>
+        <p></p>
+    </div>
+    
+    <script>
+
+        var canvas_h = 500;
+        var canvas_w = 500;
+        var my_canvas = new Drawz("canvas_wrapper",
+                                  canvas_w,
+                                  canvas_h,
+                                  "border:1px solid black;" +
+                                  "background:#333;"
+                                 );
+        var canvas_x = document.getElementsByTagName("canvas")[0].getBoundingClientRect().x;
+        var canvas_y = document.getElementsByTagName("canvas")[0].getBoundingClientRect().y;
+
+        var game_speed = 10;
+
+        var w=50;
+        var h=50
+        var x = canvas_w/2 - w/2 ;
+        var v_speed = 0
+        var h_speed = 0;
+
+        var MAX_SPEED = 8
+        var y = 0;
+        var lock = false;
+        var color = ["white","#ccc"]
+        var timer = 0;
+        var score = 0;
+        var highscore = 0;
+
+        function update() {
+            timer++;
+            if (!lock) {
+                if (timer % 25 == 0) { color = ["white","#ccc"]};
+            
+                if (v_speed < MAX_SPEED) {
+                    v_speed+=0.25;
+                } 
+                
+                if (y >= canvas_h - h) {
+                    if (highscore < score) {
+                       highscore=score
+                    }
+                    score=0;
+                    v_speed = -MAX_SPEED
+                    MAX_SPEED-=1;
+                }
+                
+                if (h_speed > 0) {
+                    h_speed-=0.01;
+                }
+                
+                if (h_speed < 0) {
+                    h_speed+=0.01;
+                }
+            
+                if (x<= 0 || x >= canvas_w - w) {
+                    h_speed = h_speed * -1
+                }
+
+                y+=v_speed;
+                x+=h_speed;
+            }
+        }
+
+        function draw() {
+            document.getElementsByTagName("p")[0].textContent = "Score: " + score + " --- HighScore: " + highscore;
+
+            my_canvas.clear()
+            my_canvas.draw_rect(x,y,w,h,{   "fill_color":color,
+                                            "gradient":["linear","auto"],
+                                            "fill_color":color,
+                                            "rotation":90})
+        }
+        
+        // Game Loop
+        setInterval(function(){ update(); draw();},game_speed);
+        
+        // Mouse Events
+        var canvas_div = document.getElementById("canvas_wrapper")
+        canvas_div.addEventListener("mousedown",function(e) {
+            lock = false;
+            if ((e.clientX-canvas_x >= x && e.clientX-canvas_x <= x + w) && (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
+                score++;
+                MAX_SPEED = 8;
+                v_speed = -10;
+                color=["red","red"];
+            }
+            if ((e.clientX-canvas_x >= x && e.clientX-canvas_x <= x + w/4) && (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
+                h_speed=3
+                color=["red","red"];
+            }
+            if ((e.clientX-canvas_x >= x + w/4 && e.clientX-canvas_x <= x + w/2) && (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
+                h_speed=1
+                color=["red","red"];
+            }
+            if ((e.clientX-canvas_x >= x + w/2 && e.clientX-canvas_x <= x + (w/2 + w/4))&& (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
+                h_speed=-1
+                color=["red","red"];
+            }
+            if ((e.clientX-canvas_x >= x + (w/2 + w/4) && e.clientX-canvas_x <= x + w)&& (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
+                h_speed=-3
+                color=["red","red"];
+            }
+        })
+
+    </script>
+</body>
+</html>
