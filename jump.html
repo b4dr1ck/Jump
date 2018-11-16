@@ -27,26 +27,27 @@
 
         p
         {
-            position: absolute;
             color:white;
-            margin:5px 0px 0px 5px;
+            margin:0px;
+            text-align: center;
+            border:1px dotted #ccc;
         }
 
         #canvas_wrapper
         {
             width:500px;
             margin: 0px auto;
-            border:1px solid #333;
             border-radius: 5px;
-            padding: 10px;
-            background: #666;
+            box-shadow: 0px 0px 15px black;
+            padding: 15px;
+            background: linear-gradient(to bottom,#333,#666);
         }
     </style>
 
     <div id="canvas_wrapper">
         <h1>Bouncing Box</h1>
-        <h2>click to let it bounce...</h2>
-        <p></p>
+        <h2>click to let it bounce</h2>
+        <p>...</p>
     </div>
     
     <script>
@@ -56,16 +57,16 @@
         var my_canvas = new Drawz("canvas_wrapper",
                                   canvas_w,
                                   canvas_h,
-                                  "border:1px solid black;" +
                                   "background:#333;"
                                  );
+        
         var canvas_x = document.getElementsByTagName("canvas")[0].getBoundingClientRect().x;
         var canvas_y = document.getElementsByTagName("canvas")[0].getBoundingClientRect().y;
 
         var game_speed = 10;
 
         var w=50;
-        var h=50
+        var h=50;
         var x = canvas_w/2 - w/2 ;
         var v_speed = 0
         var h_speed = 0;
@@ -119,12 +120,15 @@
             my_canvas.clear()
             my_canvas.draw_rect(x,y,w,h,{   "fill_color":color,
                                             "gradient":["linear","auto"],
-                                            "fill_color":color,
                                             "rotation":90})
+            
+
         }
         
         // Game Loop
-        setInterval(function(){ update(); draw();},game_speed);
+        setInterval(function(){ update(); 
+                                draw();
+                              },game_speed);
         
         // Mouse Events
         var canvas_div = document.getElementById("canvas_wrapper")
@@ -135,24 +139,44 @@
                 MAX_SPEED = 8;
                 v_speed = -10;
                 color=["red","red"];
+
+                if ((e.clientX-canvas_x >= x && e.clientX-canvas_x <= x + w/4)) {
+                    h_speed=3
+                    color=["red","red"];
+                }
+                if ((e.clientX-canvas_x >= x + w/4 && e.clientX-canvas_x <= x + w/2)) {
+                    h_speed=1
+                    color=["red","red"];
+                }
+                if ((e.clientX-canvas_x >= x + w/2 && e.clientX-canvas_x <= x + (w/2 + w/4))) {
+                    h_speed=-1
+                    color=["red","red"];
+                }
+                if ((e.clientX-canvas_x >= x + (w/2 + w/4) && e.clientX-canvas_x <= x + w)) {
+                    h_speed=-3
+                    color=["red","red"];
+                }
             }
-            if ((e.clientX-canvas_x >= x && e.clientX-canvas_x <= x + w/4) && (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
-                h_speed=3
-                color=["red","red"];
+
+            
+            // circle collision
+            /*function collision(p1x, p1y, r1, p2x, p2y, r2) {
+                var a;
+                var x;
+                var y;
+
+                a = r1 + r2;
+                x = p1x - p2x;
+                y = p1y - p2y;
+
+
+                if (a > Math.sqrt((x * x) + (y * y))) { return true; } else { return false; }
             }
-            if ((e.clientX-canvas_x >= x + w/4 && e.clientX-canvas_x <= x + w/2) && (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
-                h_speed=1
-                color=["red","red"];
-            }
-            if ((e.clientX-canvas_x >= x + w/2 && e.clientX-canvas_x <= x + (w/2 + w/4))&& (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
-                h_speed=-1
-                color=["red","red"];
-            }
-            if ((e.clientX-canvas_x >= x + (w/2 + w/4) && e.clientX-canvas_x <= x + w)&& (e.clientY-canvas_y >= y && e.clientY-canvas_y <= y+h)) {
-                h_speed=-3
-                color=["red","red"];
-            }
+            var collision = collision(e.clientX-canvas_x, e.clientY-canvas_y, 1, 50, 100, 50);*/
         })
+        
+
+
 
     </script>
 </body>
